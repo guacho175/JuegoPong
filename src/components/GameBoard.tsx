@@ -22,9 +22,8 @@ interface GameState {
 const BALL_RADIUS = 8;
 const PADDLE_WIDTH = 12;
 const PADDLE_HEIGHT = 90;
-const INITIAL_BALL_SPEED = 5;
 const SPEED_INCREMENT = 0.2;
-const CPU_SPEED = 4.5;
+const CPU_BASE_SPEED = 5;
 const WINNING_SCORE = 7;
 
 export default function GameBoard() {
@@ -69,10 +68,12 @@ export default function GameBoard() {
   const keys = useRef<{ [key: string]: boolean }>({});
 
   const resetBall = useCallback((canvas: HTMLCanvasElement, direction: number) => {
+    // Escalar la velocidad inicial de la pelota según el ancho de pantalla para que en móviles (pantallas angostas) haya tiempo de reaccionar
+    const speedX = Math.max(3, canvas.width * 0.006); 
     ball.current = {
       x: canvas.width / 2,
       y: canvas.height / 2,
-      dx: direction * INITIAL_BALL_SPEED,
+      dx: direction * speedX,
       dy: (Math.random() - 0.5) * 8
     };
   }, []);
@@ -122,19 +123,20 @@ export default function GameBoard() {
     const canvas = canvasRef.current;
     
     // Player Move
-    const moveSpeed = 8;
+    const moveSpeed = Math.max(12, canvas.height * 0.02); // Sensibilidad de teclado mucho más rápida
     if (keys.current['arrowup'] || keys.current['w']) p1Y.current -= moveSpeed;
     if (keys.current['arrowdown'] || keys.current['s']) p1Y.current += moveSpeed;
 
     // Boundaries Player
     p1Y.current = Math.max(0, Math.min(canvas.height - PADDLE_HEIGHT, p1Y.current));
 
-    // CPU Follow Logic (A bit of delay/imperfect tracking)
+    // Bot-Pong Follow Logic (A bit of delay/imperfect tracking)
+    const currentCpuSpeed = Math.max(3, canvas.height * 0.008);
     const targetY = ball.current.y - PADDLE_HEIGHT / 2;
-    if (p2Y.current < targetY - 10) p2Y.current += CPU_SPEED;
-    else if (p2Y.current > targetY + 10) p2Y.current -= CPU_SPEED;
+    if (p2Y.current < targetY - 10) p2Y.current += currentCpuSpeed;
+    else if (p2Y.current > targetY + 10) p2Y.current -= currentCpuSpeed;
 
-    // Boundaries CPU
+    // Boundaries Bot-Pong
     p2Y.current = Math.max(0, Math.min(canvas.height - PADDLE_HEIGHT, p2Y.current));
 
     // Ball Move
@@ -338,7 +340,7 @@ export default function GameBoard() {
           </div>
           <div className="h-8 w-[1px] bg-white/20" />
           <div className="text-center">
-            <div className="text-[10px] uppercase tracking-widest text-neon-pink font-bold">CPU</div>
+            <div className="text-[10px] uppercase tracking-widest text-neon-pink font-bold">Bot-Pong</div>
             <div className="text-4xl font-bold neon-text-pink leading-none">{gameState.cpuScore}</div>
           </div>
         </div>
@@ -402,14 +404,14 @@ export default function GameBoard() {
               "text-5xl font-black italic mb-2 tracking-tighter",
               gameState.playerScore > gameState.cpuScore ? "text-neon-cyan" : "text-neon-pink"
             )}>
-              {gameState.playerScore > gameState.cpuScore ? "YOU DOMINATED!" : "CPU WINS"}
+              {gameState.playerScore > gameState.cpuScore ? "YOU DOMINATED!" : "Bot-Pong WINS"}
             </h2>
             <div className="text-8xl font-bold mb-8">
               {gameState.playerScore} - {gameState.cpuScore}
             </div>
             <div className="flex flex-col md:flex-row gap-4 mt-4 w-full max-w-md">
               
-              {gameState.playerScore > 0 && gameState.playerScore >= gameState.cpuScore && (
+              {gameState.playerScore > 0 && (
                  <div className="flex flex-col gap-2 w-full">
                    <input
                      type="text"
