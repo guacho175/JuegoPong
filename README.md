@@ -5,7 +5,7 @@
 Una hiper-estilizada versión Cyberpunk del clásico juego de arcade **Pong**, con música synthwave de fondo, partículas explosivas y físicas en tiempo real. Este proyecto forma parte de la **Franquicia Neón** y conserva estrictamente toda la arquitectura híbrida y filosofía de diseño visual de sus títulos hermanos (Ritmo Neón Serpiente y Tetris Neón).
 
 🚀 **¡Juega la versión en vivo alojada en Google Cloud Run aquí!**  
-▶️ **[https://juegopong-956223175156.europe-west1.run.app/](https://pong-ne-n-956223175156.us-west1.run.app/)**
+▶️ **[https://juegopong-956223175156.europe-west1.run.app/]**
 
 ---
 
