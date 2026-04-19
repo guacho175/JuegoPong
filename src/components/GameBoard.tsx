@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Trophy, RefreshCw, Play, RotateCcw } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { fetchRanking, saveScore, PongRankingEntry } from '@/src/lib/ranking';
 
 interface Particle {
   x: number;
@@ -36,11 +37,29 @@ export default function GameBoard() {
     cpuScore: 0,
     status: 'start'
   });
+  const gameStateRef = useRef(gameState);
+
+  useEffect(() => {
+    gameStateRef.current = gameState;
+  }, [gameState]);
 
   const [highScore, setHighScore] = useState(() => {
     const saved = localStorage.getItem('neon_pong_highscore');
     return saved ? parseInt(saved) : 0;
   });
+
+  const [rankingList, setRankingList] = useState<PongRankingEntry[]>([]);
+  const [playerName, setPlayerName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const loadRanking = useCallback(async () => {
+    const data = await fetchRanking();
+    setRankingList(data);
+  }, []);
+
+  useEffect(() => {
+    loadRanking();
+  }, [loadRanking]);
 
   // Game Ref values for loop
   const p1Y = useRef(0);
@@ -99,7 +118,7 @@ export default function GameBoard() {
   }, []);
 
   const update = () => {
-    if (gameState.status !== 'playing' || !canvasRef.current) return;
+    if (gameStateRef.current.status !== 'playing' || !canvasRef.current) return;
     const canvas = canvasRef.current;
     
     // Player Move
@@ -281,16 +300,23 @@ export default function GameBoard() {
   }, [gameState.playerScore, gameState.cpuScore, highScore]);
 
   const startGame = () => {
+    if (canvasRef.current) resetBall(canvasRef.current, Math.random() > 0.5 ? 1 : -1);
     setGameState({ playerScore: 0, cpuScore: 0, status: 'playing' });
   };
 
   // Touch Support
-  const handleTouch = (e: React.TouchEvent) => {
-    if (gameState.status !== 'playing') return;
-    const touchY = e.touches[0].clientY;
+  const handleTouch = (e: React.TouchEvent | React.MouseEvent) => {
+    if (gameStateRef.current.status !== 'playing') return;
+    
+    let clientY = 0;
+    if ('touches' in e) {
+      clientY = e.touches[0].clientY;
+    } else {
+      clientY = (e as React.MouseEvent).clientY;
+    }
     const rect = canvasRef.current?.getBoundingClientRect();
     if (rect) {
-      p1Y.current = touchY - rect.top - PADDLE_HEIGHT / 2;
+      p1Y.current = clientY - rect.top - PADDLE_HEIGHT / 2;
     }
   };
 
@@ -345,9 +371,23 @@ export default function GameBoard() {
                 Start Game
               </div>
             </button>
-            <div className="mt-8 flex items-center gap-2 text-white/40">
-              <Trophy size={16} />
-              <span className="text-xs uppercase font-bold tracking-widest">High Score: {highScore}</span>
+            <div className="mt-8 p-4 bg-white/5 border border-white/10 rounded-lg w-full max-w-sm max-h-48 overflow-y-auto custom-scrollbar">
+              <h3 className="text-neon-cyan uppercase font-bold tracking-widest text-sm flex justify-center items-center gap-2 mb-3">
+                <Trophy size={16} /> Global Ranking (SheetDB)
+              </h3>
+              <div className="flex flex-col gap-2">
+                {rankingList.length > 0 ? rankingList.map((entry, idx) => (
+                  <div key={idx} className="flex justify-between items-center text-xs text-white/80 px-4 py-2 bg-black/40 rounded border border-white/5">
+                    <span className="font-bold">
+                      <span className="text-neon-cyan/50 mr-2">#{idx + 1}</span> 
+                      {entry.name}
+                    </span>
+                    <span className="font-mono font-bold text-neon-pink">{entry.score} pts</span>
+                  </div>
+                )) : (
+                  <div className="text-xs text-white/40">Cargando ranking global...</div>
+                )}
+              </div>
             </div>
           </motion.div>
         )}
@@ -367,21 +407,54 @@ export default function GameBoard() {
             <div className="text-8xl font-bold mb-8">
               {gameState.playerScore} - {gameState.cpuScore}
             </div>
-            <div className="flex gap-4">
-              <button
-                onClick={startGame}
-                className="flex items-center gap-3 px-8 py-3 bg-neon-cyan text-black font-bold uppercase tracking-widest hover:brightness-110 transition-all rounded-sm"
-              >
-                <RefreshCw size={20} />
-                Rematch
-              </button>
-              <button
-                onClick={() => setGameState({ ...gameState, status: 'start' })}
-                className="flex items-center gap-3 px-8 py-3 border-2 border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-all rounded-sm"
-              >
-                <RotateCcw size={20} />
-                Menu
-              </button>
+            <div className="flex flex-col md:flex-row gap-4 mt-4 w-full max-w-md">
+              
+              {gameState.playerScore > 0 && gameState.playerScore >= gameState.cpuScore && (
+                 <div className="flex flex-col gap-2 w-full">
+                   <input
+                     type="text"
+                     placeholder="TU NOMBRE"
+                     maxLength={15}
+                     value={playerName}
+                     onChange={(e) => setPlayerName(e.target.value)}
+                     className="px-4 py-3 bg-white/5 border border-neon-cyan/30 text-white font-bold uppercase tracking-widest text-center rounded-sm outline-none focus:border-neon-cyan"
+                   />
+                   <button
+                     onClick={async () => {
+                       if (!playerName.trim()) return;
+                       setIsSaving(true);
+                       await saveScore(playerName, gameState.playerScore);
+                       setIsSaving(false);
+                       await loadRanking();
+                       setGameState({ ...gameState, status: 'start' });
+                     }}
+                     disabled={isSaving || !playerName.trim()}
+                     className="w-full py-3 bg-neon-cyan/20 border border-neon-cyan text-neon-cyan font-bold uppercase tracking-widest hover:bg-neon-cyan/40 disabled:opacity-50 transition-all rounded-sm"
+                   >
+                     {isSaving ? 'Guardando...' : 'Subir Score Global'}
+                   </button>
+                 </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-2 w-full">
+                <button
+                  onClick={startGame}
+                  className="flex-1 flex justify-center items-center gap-3 px-8 py-3 bg-neon-cyan text-black font-bold uppercase tracking-widest hover:brightness-110 transition-all rounded-sm"
+                >
+                  <RefreshCw size={20} />
+                  Revancha
+                </button>
+                <button
+                  onClick={() => {
+                    setGameState({ ...gameState, status: 'start' });
+                    setPlayerName('');
+                  }}
+                  className="flex-1 flex justify-center items-center gap-3 px-8 py-3 border-2 border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-all rounded-sm"
+                >
+                  <RotateCcw size={20} />
+                  Menú
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
