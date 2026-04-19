@@ -4,11 +4,11 @@ export interface PongRankingEntry {
   date: string;
 }
 
-const SHEETDB_API = 'https://sheetdb.io/api/v1/d64c584yscssq';
+const APPS_SCRIPT_API = 'https://script.google.com/macros/s/AKfycbwk6I3OvEN4GL1zjBcDvarlN_LVGrKWHXYbFVIOgXOOC1_Us1gEnT0dHIEiEkZLApuV/exec';
 
 export async function fetchRanking(): Promise<PongRankingEntry[]> {
   try {
-    const res = await fetch(`${SHEETDB_API}?limit=50`);
+    const res = await fetch(`${APPS_SCRIPT_API}?juego=pong`);
     if (!res.ok) {
       throw new Error('API error: ' + res.status);
     }
@@ -18,12 +18,16 @@ export async function fetchRanking(): Promise<PongRankingEntry[]> {
       return [];
     }
     
-    // Asumimos que los datos tienen al menos { name, score, date }
-    const sorted = data
+    // Map Apps Script response {nombre, puntos, fecha} to PongRankingEntry {name, score, date}
+    const mapped = data.map((item: any) => ({
+      name: item.nombre,
+      score: item.puntos,
+      date: item.fecha
+    }));
+    
+    return mapped
       .sort((a, b) => Number(b.score) - Number(a.score))
       .slice(0, 10);
-    
-    return sorted;
   } catch (error) {
     console.error('[Ranking] Error fetching ranking:', error);
     return [];
@@ -35,19 +39,22 @@ export async function saveScore(
   score: number
 ): Promise<boolean> {
   const entry = {
-    name: name.trim().toUpperCase(),
-    score,
-    date: new Date().toISOString().split('T')[0],
+    juego: 'pong',
+    nombre: name.trim().toUpperCase(),
+    puntos: score
   };
 
   try {
-    const res = await fetch(SHEETDB_API, {
+    // Send as plain text (stringify) with no custom headers to avoid CORS preflight,
+    // Google Apps script handles it well if using e.postData.contents.
+    // However, fetch with application/x-www-form-urlencoded works and avoids preflight if needed.
+    // The google Apps Script we wrote parses text well.
+    const res = await fetch(APPS_SCRIPT_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: [entry] }),
+      body: JSON.stringify(entry),
     });
     
-    if (!res.ok) {
+    if (!res.ok && res.type !== 'opaque') {
       throw new Error('API error: ' + res.status);
     }
     
