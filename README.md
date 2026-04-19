@@ -1,6 +1,6 @@
 # 🏓 Pong Neón
 
-![Pong Neón Logo](public/logo.png)
+![Pong Neón Logo](public/banner.png)
 
 Una hiper-estilizada versión Cyberpunk del clásico juego de arcade **Pong**, con música synthwave de fondo, partículas explosivas y físicas en tiempo real. Este proyecto forma parte de la **Franquicia Neón** y conserva estrictamente toda la arquitectura híbrida y filosofía de diseño visual de sus títulos hermanos (Ritmo Neón Serpiente y Tetris Neón).
 

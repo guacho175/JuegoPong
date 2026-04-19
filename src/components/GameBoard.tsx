@@ -325,7 +325,7 @@ export default function GameBoard() {
   return (
     <div 
       ref={containerRef} 
-      className="relative w-full h-[600px] bg-cyber-bg/50 rounded-2xl border-2 border-white/10 overflow-hidden"
+      className="relative w-full h-[55vh] min-h-[400px] md:h-[600px] bg-cyber-bg/50 rounded-2xl border-2 border-white/10 overflow-hidden"
       onTouchMove={handleTouch}
       onTouchStart={handleTouch}
     >

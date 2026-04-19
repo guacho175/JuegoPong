@@ -50,16 +50,16 @@ export default function App() {
       />
 
       <div className="w-full max-w-5xl space-y-6 z-10">
-        <header className="flex flex-col md:flex-row justify-between items-end md:items-center gap-4 mb-4">
+        <header className="flex flex-col md:flex-row justify-center items-center md:justify-between gap-4 mb-4 text-center md:text-left">
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
           >
-            <h1 className="text-4xl font-bold italic tracking-tighter neon-text-cyan flex items-center gap-2">
+            <h1 className="text-4xl font-bold italic tracking-tighter neon-text-cyan flex items-center justify-center md:justify-start gap-2">
               <span className="p-1.5 bg-neon-cyan rounded text-black not-italic text-2xl font-black">N</span>
               PONG NEÓN
             </h1>
-            <p className="text-white/40 text-[10px] uppercase tracking-[0.4em] font-medium ml-1">
+            <p className="text-white/40 text-[10px] uppercase tracking-[0.4em] font-medium ml-1 mt-1">
               Arcade System v1.0
             </p>
           </motion.div>
@@ -73,14 +73,6 @@ export default function App() {
                 ))}
               </div>
             </div>
-            <a 
-              href="https://github.com" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 glass-morphism rounded-full hover:bg-white/10 transition-colors"
-            >
-              <Github size={20} className="text-white/60" />
-            </a>
           </div>
         </header>
 
