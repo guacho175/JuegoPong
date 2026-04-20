@@ -1,31 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --color-neon-cyan: #00f3ff;
-  --color-neon-pink: #ff00ff;
-  --color-cyber-bg: #05051a;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-magenta-500: #ff00ff;
+  --color-magenta-600: #d000d0;
+  --color-cyan-400: #00ffff;
+  --color-cyan-600: #00cccc;
+  --color-lime-400: #39ff14;
 }
 
-@layer base {
-  body {
-    @apply bg-cyber-bg text-white font-sans overflow-hidden antialiased;
+@layer utilities {
+  .shadow-neon-magenta {
+    box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+  }
+  .shadow-neon-cyan {
+    box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+  }
+  .shadow-neon-lime {
+    box-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14;
+  }
+  .text-neon-magenta {
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff;
+  }
+  .text-neon-cyan {
+    text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+  }
+  .text-neon-lime {
+    text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14;
+  }
+  .glass-morphism {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10;
   }
 }
 
-.neon-shadow-cyan {
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.5), 0 0 30px rgba(0, 243, 255, 0.2);
+html, body {
+  @apply bg-[#0c0c0e] text-slate-100 antialiased;
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none;
 }
 
-.neon-text-cyan {
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.8), 0 0 20px rgba(0, 243, 255, 0.4);
-}
-
-.neon-text-pink {
-  text-shadow: 0 0 10px rgba(255, 0, 255, 0.8), 0 0 20px rgba(255, 0, 255, 0.4);
-}
-
-.glass-morphism {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10;
+canvas {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
 }

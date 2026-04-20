@@ -26,7 +26,13 @@ const SPEED_INCREMENT = 0.2;
 const CPU_BASE_SPEED = 5;
 const WINNING_SCORE = 7;
 
-export default function GameBoard() {
+interface GameBoardProps {
+  onGameOver?: () => void;
+  onReset?: () => void;
+  onStart?: () => void;
+}
+
+export default function GameBoard({ onGameOver, onReset, onStart }: GameBoardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>(null);
@@ -173,7 +179,7 @@ export default function GameBoard() {
       const relativeIntersectY = (p1Y.current + PADDLE_HEIGHT / 2) - ball.current.y;
       const normalizedIntersectY = relativeIntersectY / (PADDLE_HEIGHT / 2);
       ball.current.dy = normalizedIntersectY * -7;
-      createExplosion(ball.current.x, ball.current.y, '#00f3ff');
+      createExplosion(ball.current.x, ball.current.y, '#00ffff');
     }
 
     if (checkPaddleCollision(canvas.width - 20 - PADDLE_WIDTH, p2Y.current, false)) {
@@ -293,17 +299,21 @@ export default function GameBoard() {
 
   useEffect(() => {
     if (gameState.playerScore >= WINNING_SCORE || gameState.cpuScore >= WINNING_SCORE) {
-      setGameState(prev => ({ ...prev, status: 'gameover' }));
+      if (gameState.status !== 'gameover') {
+        setGameState(prev => ({ ...prev, status: 'gameover' }));
+        if (onGameOver) onGameOver();
+      }
       if (gameState.playerScore > highScore) {
         setHighScore(gameState.playerScore);
         localStorage.setItem('neon_pong_highscore', gameState.playerScore.toString());
       }
     }
-  }, [gameState.playerScore, gameState.cpuScore, highScore]);
+  }, [gameState.playerScore, gameState.cpuScore, highScore, gameState.status, onGameOver]);
 
   const startGame = () => {
     if (canvasRef.current) resetBall(canvasRef.current, Math.random() > 0.5 ? 1 : -1);
     setGameState({ playerScore: 0, cpuScore: 0, status: 'playing' });
+    if (onStart) onStart();
   };
 
   // Touch Support
@@ -429,6 +439,7 @@ export default function GameBoard() {
                        setIsSaving(false);
                        await loadRanking();
                        setGameState({ ...gameState, status: 'start' });
+                       if (onReset) onReset();
                      }}
                      disabled={isSaving || !playerName.trim()}
                      className="w-full py-3 bg-neon-cyan/20 border border-neon-cyan text-neon-cyan font-bold uppercase tracking-widest hover:bg-neon-cyan/40 disabled:opacity-50 transition-all rounded-sm"
@@ -450,6 +461,7 @@ export default function GameBoard() {
                   onClick={() => {
                     setGameState({ ...gameState, status: 'start' });
                     setPlayerName('');
+                    if (onReset) onReset();
                   }}
                   className="flex-1 flex justify-center items-center gap-3 px-8 py-3 border-2 border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/10 transition-all rounded-sm"
                 >

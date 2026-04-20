@@ -1,39 +1,58 @@
-# 🏓 Pong Neón
+# Pong Neon
 
-![Pong Neón Logo](public/banner.png)
+Juego en vivo: https://juegopong-956223175156.europe-west1.run.app/
 
-Una hiper-estilizada versión Cyberpunk del clásico juego de arcade **Pong**, con música synthwave de fondo, partículas explosivas y físicas en tiempo real. Este proyecto forma parte de la **Franquicia Neón** y conserva estrictamente toda la arquitectura híbrida y filosofía de diseño visual de sus títulos hermanos (Ritmo Neón Serpiente y Tetris Neón).
+## Descripcion
 
-🚀 **¡Juega la versión en vivo alojada en Google Cloud Run aquí!**  
-▶️ **[https://juegopong-956223175156.europe-west1.run.app/]**
+Pong Neon reinterpreta el clasico Pong con IA rival, ranking global y una interfaz cyber neon compatible con escritorio y dispositivos tactiles.
 
----
+## Estandar aplicado
 
-## 🕹️ Mecánicas de Juego
+Pong sigue la misma referencia estructural de JuegoSerpiente.
 
-- Mueve tu paleta para rechazar la pelota usando físicas puras (Táctil o Teclado).
-- Cada rebote incrementa sutilmente la velocidad de la bola brillante.
-- La Inteligencia Artificial adaptativa de la CPU tratará de interceptar (¡aunque comete pequeños fallos permitiéndote ganar!).
-- El primero en dominar y llegar al **Límite de Puntos** termina la partida.
-- Incluye tabla persistente "Global Ranking" impulsada por **SheetDB**.
+- Header, ranking, zona de juego y reproductor en layout consistente.
+- Tokens compartidos de color y tipografia.
+- Arquitectura y despliegue comunes al resto de la franquicia.
 
-## 💻 Controles Híbridos Universales
+## Arquitectura comun
 
-Este motor está cuidadosamente construido para operar a 60 FPS fijos sin importar desde qué dispositivo juegues:
+- React 19 + TypeScript + Vite
+- Tailwind CSS v4 + motion/react
+- Juego en canvas con loop de render optimizado
+- Ranking remoto + respaldo localStorage
+- Dockerfile multistage + cloudbuild.yaml
 
-- **En PC:**
-  - **Arriba / Abajo** (o **W / S**): Mueve la raqueta de tu jugador hacia arriba y hacia abajo suavemente.
-- **En Móviles:**
-  - Solo apoya el dedo cerca de tu lado y **desliza** (Swipe / Arrastrar) para que la paleta persiga fielmente tu dedo.
-- **Protección Inteligente:** Los controles de arrastre y teclado direccional bloquean intencionalmente el scroll nativo gracias a los eventos `preventDefault` para una inmersión fluida sin molestias mecánicas.
+## Controles
 
-## 🛠️ Tecnologías y Arquitectura
+- Escritorio: flechas arriba/abajo o W/S.
+- Movil: swipe vertical para mover la paleta.
 
-Desarrollado bajo estancias estrictas y un marco normativo único:
+## Desarrollo local
 
-- **React 19 + TypeScript + Vite**: Single Page Application estructurada, rápida y escalable.
-- **Render `<canvas>` de Alto Rendimiento**: El motor gráfico opera con su propio Game Tick coordinado mediante `requestAnimationFrame`, divorciándose totalmente de manipulaciones de CSS-DOM del React Tree para mover a la pelota o enemigos.
-- **Tailwind v4 CSS + Motion (Framer)**: El esqueleto Glassmorphism y utilidades visuales estéticas estilo retro o luces se hacen bajo Tailwind puro en un ambiente React.
-- **Persistencia en la Nube Serverless**: Un script especializado comunica e intercepta cada victoria a una tabla `SheetDB` global asíncrona.
-- **Alarma BeforeUnload:** Prevención segura de cierres de ventanas inoportunos a media partida para evitar enojo del usuario.
-- **Docker + CI/CD GCRN Nginx**: Construcción Multi-stage alpine contenida operando el puerto interno 8080.
+1. Instalar dependencias:
+
+```bash
+npm install
+```
+
+2. Ejecutar entorno local:
+
+```bash
+npm run dev
+```
+
+3. Validar tipado:
+
+```bash
+npm run lint
+```
+
+## Build y despliegue
+
+- Build: npm run build
+- Runtime: puerto 8080
+- Cloud Run mediante Dockerfile y cloudbuild.yaml
+
+## Creditos
+
+Desarrollado por Galindez & IA.
