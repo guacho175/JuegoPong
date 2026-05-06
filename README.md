@@ -1,6 +1,6 @@
 # Pong Neon
 
-Juego en vivo: https://juegopong-956223175156.europe-west1.run.app/
+Juego en vivo: https://pong-ne-n-956223175156.us-west1.run.app/
 
 ## Descripcion
 
