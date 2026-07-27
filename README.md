@@ -1,58 +1,50 @@
-# Pong Neon
+# Pong Neón 🎾
 
-Juego en vivo: https://pong-ne-n-956223175156.us-west1.run.app/
+Bienvenido al repositorio de **Pong Neón**, una reinvención técnica y moderna del clásico juego de tenis retro, desarrollado en **React**, **TypeScript** y **Vite**. Este proyecto forma parte del universo **Neon Arcade**, destacando por su estética retrowave y su arquitectura orientada al rendimiento.
 
-## Descripcion
+🌐 **Juega ahora en:** [https://pong.orbynexdigital.cl/](https://pong.orbynexdigital.cl/)
 
-Pong Neon reinterpreta el clasico Pong con IA rival, ranking global y una interfaz cyber neon compatible con escritorio y dispositivos tactiles.
+## 🚀 Arquitectura y Tecnologías
 
-## Estandar aplicado
+El juego está diseñado como una aplicación web de alto rendimiento (SPA), garantizando fluidez en los inputs del usuario (60 FPS) y un renderizado impecable a través de React.
 
-Pong sigue la misma referencia estructural de JuegoSerpiente.
+- **Frontend:** React 19, TypeScript (para seguridad de tipos estricta y mejor mantenibilidad).
+- **Tooling:** Vite
+- **Estilos:** CSS modular (animaciones fluidas por GPU, variables CSS, y efectos de brillo *glow* dinámicos).
+- **Infraestructura:** Serverless nativo vía Vercel.
 
-- Header, ranking, zona de juego y reproductor en layout consistente.
-- Tokens compartidos de color y tipografia.
-- Arquitectura y despliegue comunes al resto de la franquicia.
+## 🎮 Caso de Uso y Funcionalidades (Game Design)
 
-## Arquitectura comun
+El caso de uso principal de la aplicación es proveer una experiencia arcade completa tanto en dispositivos de escritorio como en terminales móviles. 
 
-- React 19 + TypeScript + Vite
-- Tailwind CSS v4 + motion/react
-- Juego en canvas con loop de render optimizado
-- Ranking remoto + respaldo localStorage
-- Dockerfile multistage + cloudbuild.yaml
+### Funcionalidades Técnicas:
+* **Físicas en Tiempo Real:** Cálculo preciso de rebotes, colisiones y velocidad adaptativa de la pelota (paddle tracking).
+* **Responsive Design:** La cancha y los controles están programados para escalar dinámicamente y funcionar de manera nativa en navegadores móviles (Mobile-first). Cuenta con soporte para eventos táctiles (touch events) para controlar la raqueta.
+* **Sistema de Puntaje y Ranking:** Persistencia del estado de la partida y un sistema de ranking o historial que guarda las puntuaciones máximas (High Scores), incentivando la rejugabilidad.
+* **Audio Interactivo:** Integración con la Web Audio API para efectos de sonido reactivos (rebotes, puntos anotados) de baja latencia.
 
-## Controles
+## 🛠️ Instalación y Ejecución Local
 
-- Escritorio: flechas arriba/abajo o W/S.
-- Movil: swipe vertical para mover la paleta.
+Si deseas correr este proyecto y modificar el código fuente:
 
-## Desarrollo local
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/guacho175/JuegoPong.git
+   cd JuegoPong
+   ```
 
-1. Instalar dependencias:
+2. Instala las dependencias:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm install
-```
+3. Inicia el servidor local:
+   ```bash
+   npm run dev
+   ```
 
-2. Ejecutar entorno local:
+4. Visualiza la aplicación en `http://localhost:5173`.
 
-```bash
-npm run dev
-```
+## 👨‍💻 Autor
 
-3. Validar tipado:
-
-```bash
-npm run lint
-```
-
-## Build y despliegue
-
-- Build: npm run build
-- Runtime: puerto 8080
-- Cloud Run mediante Dockerfile y cloudbuild.yaml
-
-## Creditos
-
-Desarrollado por Galindez & IA.
+Desarrollado y mantenido por **Galindez** - 2026.
